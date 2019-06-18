@@ -5,10 +5,10 @@ import { map, catchError, tap } from 'rxjs/operators';
 
 
 
-const endpoint1 = 'http://localhost:56121/api/';
-const endpoint = 'http://localhost:56121/api/';
+//const endpoint1 = 'http://localhost:56121/api/';
+// const endpoint = 'http://localhost:56121/api/';
 
-//const endpoint = 'http://172.20.15.127/WebApiSegura/api/';
+const endpoint = 'http://172.20.15.127/WebApiSegura/api/';
 const httpOptions = {
 
 };
@@ -83,7 +83,7 @@ private extractGuardarlote(res:Response)
   console.log(this.httpOptions)
 
     let params = "json="+json;
-    return this.http.post(endpoint1 + 'Lote/guardar', datosLote,this.httpOptions).pipe(map(this.extractData));
+    return this.http.post(endpoint + 'Lote/guardar', datosLote,this.httpOptions).pipe(map(this.extractData));
    
 
 
