@@ -10,7 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
  import { PdfViewerModule } from 'ng2-pdf-viewer';
  import { InlineSVGModule } from 'ng-inline-svg';
  import { DynamicFormBuilderModule } from './dynamic-form-builder/dynamic-form-builder.module';
- import { AuthHttp, AuthConfig, AUTH_PROVIDERS, provideAuth, AuthModule } from 'angular2-jwt';
+//  import { AuthHttp, AuthConfig, AUTH_PROVIDERS, provideAuth, AuthModule } from 'angular2-jwt/angular2-jwt';
  import { Http, RequestOptions } from '@angular/http';
 
 import { AppComponent } from './app.component';
@@ -25,11 +25,11 @@ import {DocumentsService} from './documents.service';
 
 
 
-export function authHttpServiceFactory(http: Http, options: RequestOptions) {
-  return new AuthHttp(new AuthConfig({
-    tokenGetter: (() => localStorage.getItem('token'))
-  }), http, options);
-}
+// export function authHttpServiceFactory(http: Http, options: RequestOptions) {
+//   return new AuthHttp(new AuthConfig({
+//     tokenGetter: (() => localStorage.getItem('token'))
+//   }), http, options);
+// }
 
 @NgModule({
   declarations: [
@@ -53,18 +53,26 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
      FormsModule,
      ReactiveFormsModule,
      DynamicFormBuilderModule,
-     NgbModule.forRoot(),
-     AuthModule.forRoot(new AuthConfig({
-      headerName: 'Authorization',
-      headerPrefix: 'Bearer',
-      tokenName: 'token',
-      tokenGetter: (() => localStorage.getItem('token') || ''),
-      globalHeaders: [{ 'Content-Type': 'application/json' }],
-      noJwtError: true
-    }))
-    
+     NgbModule.forRoot()//,
+    //  AuthModule.forRoot(new AuthConfig({
+    //   headerName: 'Authorization',
+    //   headerPrefix: 'Bearer',
+    //   tokenName: 'token',
+    //   tokenGetter: (() => localStorage.getItem('token') || ''),
+    //   globalHeaders: [{ 'Content-Type': 'application/json' }],
+    //   noJwtError: true
+    // }))
+
   ],
-  providers: [FieldsFunctionalityService,DocumentsService,AuthHttp],
+  providers: [FieldsFunctionalityService,DocumentsService//,AuthHttp//,
+  // {
+  //         provide: AuthHttp,
+  //         useFactory: authHttpServiceFactory,
+  //         deps: [Http, RequestOptions]
+  //         
+  //  }
+
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

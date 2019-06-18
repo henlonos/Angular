@@ -4,8 +4,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 @Component({
   selector: 'dynamic-form-builder',
   template:`
-    <form (ngSubmit)="onSubmit.emit(this.form.value)" [formGroup]="form" class="form-horizontal form-control-sm " #f="ngForm">
-      <div *ngFor="let field of fields">
+    <form (ngSubmit)="onSubmit.emit(this.form.value)" [formGroup]="form" class="form-horizontal form-control-sm "  #f="ngForm">
+      <div *ngFor="let field of fields" >
           <field-builder [field]="field" [form]="form"></field-builder>
       </div>
       <br>

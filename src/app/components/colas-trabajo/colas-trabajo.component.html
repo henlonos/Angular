@@ -109,10 +109,8 @@
             </div>
             <br>
 
-            <div *ngIf="idTemplateSelected">
-
+            <div *ngIf="idTemplateSelected" class="scrollformdinamico">
                 <dynamic-form-builder (onSubmit)="displayform($event)" [fields]="fields"></dynamic-form-builder>
-
             </div>
 
         </div>

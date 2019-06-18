@@ -84,9 +84,6 @@ private extractGuardarlote(res:Response)
 
     let params = "json="+json;
     return this.http.post(endpoint + 'Lote/guardar', datosLote,this.httpOptions).pipe(map(this.extractData));
-   
-
-
   }
 
 isloggedin()

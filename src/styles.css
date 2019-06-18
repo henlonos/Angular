@@ -16,6 +16,12 @@ legend.scheduler-border {
     text-align: left !important;
 }
 
+.scrollformdinamico {
+    height: 75%;
+    overflow-y: scroll;
+    margin-bottom: 5%;
+}
+
 body {
     background-color: #fff !important;
 }

@@ -264,7 +264,7 @@ getLotes( colatrabajo:string, colaMsgQueue:string)
   this.pdfSrc =  URL.createObjectURL(currentBlob);
 
     //renderiza la imagen de entrada a la pantalla
-  this.zoom = 0.4000000000000006;
+  this.zoom = 0.6666666666666674;
   // llena la lista de tipos documentales
   this.tiposDocumentales = this.lote.tdocumentales;
   // devuelve el valor del tipodocumental ya seleccionado para el lote
