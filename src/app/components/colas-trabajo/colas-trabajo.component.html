@@ -21,14 +21,19 @@
         <ng-select *ngIf="colas" [items]="colas" bindLabel="nombreCola" bindValue="idCola" (change)="onChange($event)" style="width: 25%" placeholder="Colas trabajo" #ngselect1>
         </ng-select>
 
+
     </div>
 
 
 
     <div class="row m-2">
-        <div class=" m-1 badge badge-light" *ngIf="imagen">
+        <div *ngIf="indexDocActual" class="alert-secondary m-2" role="alert" style="margin-bottom:1px; width:65%">
+            <!-- <span style="width: 20%;margin-right: 0px; ">TotalDocumentos: {{indexDocActual}}/{{CantidadDocumentos}}</span>
+         -->
+            <!-- </div>
+        <div class=" m-1 badge badge-light" *ngIf="imagen"> -->
 
-            <span><b>NombreDocumento:</b>  {{ NombreDocumento}}   //    <b>IdLote: </b>  {{ IdLote}}   //   <b>IdDocumento:</b>   {{ IdDocumento }}</span>
+            <span><b>NombreDocumento:</b>  {{ NombreDocumento}}   //    <b>IdLote: </b>  {{ IdLote}}   //   <b>IdDocumento:</b>   {{ IdDocumento }} // TotalDocumentos: {{indexDocActual}}/{{CantidadDocumentos}}</span>
 
 
 
@@ -47,7 +52,7 @@
         </div>
 
 
-        <div *ngIf="imagen" class="col col-md-8 col-md-8">
+        <div *ngIf="imagen" class="col col-md-8 col-md-8 ">
             <input (change)="onFileSelected()" type="file" id="file" class="d-none" accept=".pdf" />
             <div class="toolbar d-flex">
                 <!-- <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-open_in_browser-24px.svg'" (click)="openLocalFile()" title="Open File"></span> -->
@@ -86,9 +91,10 @@
                     </ul>
                 </div>
 
-
-                <pdf-viewer (keydown)="onKeyDown($event)" [src]="pdfSrc" [(page)]="page" [rotation]="rotation" [original-size]="originalSize" [fit-to-page]="fitToPage" (after-load-complete)="afterLoadComplete($event)" [zoom]="zoom" [show-all]="showAll" [stick-to-page]="stickToPage"
-                    [render-text]="renderText" [external-link-target]="'blank'" [autoresize]="autoresize" (error)="onError($event)" (on-progress)="onProgress($event)" (page-rendered)="pageRendered($event)" style="display: block;"></pdf-viewer>
+                <div style="overflow-y: scroll" #pdfv>
+                    <pdf-viewer (keydown)="onKeyDown($event)" [src]="pdfSrc" [(page)]="page" [rotation]="rotation" [original-size]="originalSize" [fit-to-page]="fitToPage" (after-load-complete)="afterLoadComplete($event)" [zoom]="zoom" [show-all]="showAll" [stick-to-page]="stickToPage"
+                        [render-text]="renderText" [external-link-target]="'blank'" [autoresize]="autoresize" (error)="onError($event)" (on-progress)="onProgress($event)" (page-rendered)="pageRendered($event)" style="display: block;height:85vh; "></pdf-viewer>
+                </div>
             </div>
         </div>
 

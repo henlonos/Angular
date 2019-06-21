@@ -6,9 +6,9 @@ import { map, catchError, tap } from 'rxjs/operators';
 
 
 //const endpoint1 = 'http://localhost:56121/api/';
-// const endpoint = 'http://localhost:56121/api/';
+const endpoint = 'http://localhost:56121/api/';
 
-const endpoint = 'http://172.20.15.127/WebApiSegura/api/';
+//  const endpoint = 'http://172.20.15.127/WebApiSegura/api/';
 const httpOptions = {
 
 };
@@ -71,6 +71,12 @@ private extractGuardarlote(res:Response)
   {
      let usuario = localStorage.getItem("usuario");
     return this.http.get(endpoint+ 'Lote/obtenerLoteIndexacion?colaTrabajo='+nombreCola+'&colaMsgQueue='+colaMsgqueue+'&usuario='+usuario,httpOptions).pipe(
+      map(this.extractDataLote));
+  }
+
+  validarLoteFull(iddocumentos,idlote)
+  {
+    return this.http.get(endpoint+ 'Lote/ValidarLoteFull?IdDocs='+iddocumentos+'&idlote='+idlote ,httpOptions).pipe(
       map(this.extractDataLote));
   }
   postGuardarLote(datosLote)

@@ -44,6 +44,7 @@ export class ColasTrabajoComponent implements OnInit {
   fitToPage = false;
   outline: any[];
   isOutlineShown = false;
+  scroll = true;
 
   // variables carga lote y datos necesario para mostrar la imagen  y sus campos
   pdfQuery = '';
@@ -56,6 +57,7 @@ export class ColasTrabajoComponent implements OnInit {
   idTemplateSelected:any;
   lote:any = [];
   template:any=[];
+  iddocumentosLote:any;
   NombreDocumento;
   IdLote;
   imagen ; 
@@ -71,6 +73,9 @@ export class ColasTrabajoComponent implements OnInit {
   motivosDescarte:any=[];
   categoria:any;
   motivoSelected:any;
+  mensajetoast:any;
+  indexDocActual:any;
+  CantidadDocumentos:any;
 
   // variable que escucha cualquier tecla digitada. sirve para renderizar la imagen
   public keypressed;
@@ -82,12 +87,24 @@ export class ColasTrabajoComponent implements OnInit {
   @ViewChild('descarte') NgSelectModule;
   modalOptions: NgbModalOptions = {};
   pdfSrc: string | PDFSource | ArrayBuffer;
+  @ViewChild('pdfv') public target: ElementRef;
   @HostListener('window:keydown', ['$event'])handleKeyboardEvent(e) {
   this.keypressed = e.keyCode;
+  console.log(this.keypressed);
   if(((e.shiftKey && this.keypressed == 189) || (e.shiftKey && this.keypressed == 109)) && this.pdfSrc != "" )
   {
      this.zoom += -0.1;
+
   }
+  if((e.shiftKey  &&  this.keypressed == 75) && this.pdfSrc != "" )
+  {
+    this.target.nativeElement.scrollTop += 20;
+  }
+  if((e.shiftKey  &&  this.keypressed == 73) && this.pdfSrc != "" )
+  {
+    this.target.nativeElement.scrollTop -= 20;
+  }
+
   if(((e.shiftKey && this.keypressed == 107) || (e.shiftKey &&this.keypressed == 187)) && this.pdfSrc != "" )
   {
      this.zoom += 0.1;
@@ -108,7 +125,7 @@ export class ColasTrabajoComponent implements OnInit {
     this.modalService.open(this.modaldescarte,this.modalOptions);
 
   }
-  console.log(this.keypressed);
+
 
 }
   
@@ -128,7 +145,7 @@ ngOnInit() {
 
 
 onChange($event) {
- console.log($event);
+
  this.colatrabajo = $event.nombreCola;
  this.colamsg = $event.colaMsgQueue;
  this.imagen = "";
@@ -165,13 +182,15 @@ guardarDescarte()
   this.procesoOK = dataguardar;
   if(this.procesoOK)
   {
-    this.showSuccessDescarte();
+    this.mensajetoast = 'Documento Descartado Exitosamente!';
+    this.showSuccess(this.mensajetoast);
     this.CerrarModal();
     this.getLotes(this.colatrabajo,this.colamsg);
     
   }
   else{
-    this.showErrorDescarte();
+    this.mensajetoast = 'Documento no fue descartado!'
+    this.showError(this.mensajetoast);
   }
   
 
@@ -179,11 +198,8 @@ guardarDescarte()
 }
 
 displayform(f) {
- 
-  this.imagen = false;
-  this.mostrarFormulario = false;
-            console.log(f);
-   let datoslote = {
+
+  let datoslote = {
     datosFormulario : f,
     idlote:this.IdLote,
     idDocumento :this.IdDocumento,
@@ -193,23 +209,66 @@ displayform(f) {
     proceso:'captura',
     categoria:'indexacion',
     movitoDescarte:""
-  
   }
-  
-  this.guardarlote = this.restService.postGuardarLote(datoslote).subscribe((dataguardar: {}) => {
-  this.procesoOK = dataguardar;
-  if(this.procesoOK)
+ 
+  if(this.indexDocActual == this.CantidadDocumentos)
   {
-    this.showSuccess();
-    this.getLotes(this.colatrabajo,this.colamsg);
-  }
-  else{
-    this.showError();
-  }
+    this.imagen = false;
+    this.mostrarFormulario = false;
+    
+    this.actualizarDocumentosLS(datoslote);
+
+    this.guardarlote = this.restService.postGuardarLote(JSON.parse(localStorage.getItem("arrayDocumentos"))).subscribe((dataguardar: {}) => {
+    this.procesoOK = dataguardar;
+    if(this.procesoOK)
+    {
+      this.mensajetoast = 'Lote Guardado Exitosamente!'
+    
+      this.showSuccess(this.mensajetoast);
+      this.getLotes(this.colatrabajo,this.colamsg);
+      localStorage.removeItem("arrayDocumentos");
+      localStorage.removeItem("idDocs");
+
+
+    }
+    else{
+      this.mensajetoast = 'No fue posible guardar el lote!'
+      this.showError(this.mensajetoast);
+    }
+    
   
+    } );
+  }
+  else
+  {
+      this.iddocumentosLote = localStorage.getItem("idDocs");
+ 
+      this.actualizarDocumentosLS(datoslote);
+      
+      if(this.iddocumentosLote == null)localStorage.setItem("idDocs",this.IdDocumento);
+      else localStorage.setItem("idDocs",this.iddocumentosLote+'*'+this.IdDocumento);
 
-  } );
+      this.validarLote(localStorage.getItem("idDocs").toString(),this.IdLote);
+      
+  }
 
+}
+
+actualizarDocumentosLS(datoslote)
+{
+
+  if (localStorage.getItem("arrayDocumentos") == null)
+  {
+    let arrayDocumentos = [];
+    arrayDocumentos.push(datoslote);
+    localStorage.setItem("arrayDocumentos",JSON.stringify(arrayDocumentos));
+    return false;
+  }
+ 
+    let documentos = JSON.parse(localStorage.getItem("arrayDocumentos"));
+    documentos.push(datoslote);
+    localStorage.setItem("arrayDocumentos",JSON.stringify(documentos));
+ 
 
 }
 
@@ -221,7 +280,7 @@ getMotivosDescarte()
    
     this.motivosDescarte = data;
 
-   console.log(this.motivosDescarte);
+
   });
 }
 
@@ -230,41 +289,40 @@ getColas() {
  this.restService.getColas().subscribe((data: {}) => {
   
    this.colas = data;
-   console.log(this.colas);
+  
  if(this.imagen != "")
  {
   this.select.focus();
  }
-   console.log(this.imagen);
   
  });
 
 }
 
- 
-
-
-getLotes( colatrabajo:string, colaMsgQueue:string)
-{   
+ validarLote(IdDocs:string, idlote:string)
+ {
   this.lote = [];
-  this.restService.getLotes(colatrabajo,colaMsgQueue).subscribe((datalote: {}) => {
+  this.restService.validarLoteFull(IdDocs,idlote).subscribe((datalote: {}) => {
   this.lote = datalote;
-
+  console.log(this.lote);
   // valores del lote obtenido
   var binaryImg = atob(this.lote.valorimagenBytes);
   var length = binaryImg.length;
   var arrayBuffer = new ArrayBuffer(length);
   var uintArray = new Uint8Array(arrayBuffer);
   this.imagen = this.lote.valorimagenBytes;
+  if(this.imagen == '') this.showWarning();
   this.NombreDocumento = this.lote.NombreDocumento;
   this.IdLote = this.lote.idLote;
   this.IdDocumento= this.lote.idDocumento;
+  this.indexDocActual = this.lote.indexDocActual;
+  this.CantidadDocumentos = this.lote.totalDocumentos;
   for (var i = 0; i < length; i++) {uintArray[i] = binaryImg.charCodeAt(i);}
   var currentBlob = new Blob([uintArray], {type: 'application/pdf'});
   this.pdfSrc =  URL.createObjectURL(currentBlob);
 
     //renderiza la imagen de entrada a la pantalla
-  this.zoom = 0.6666666666666674;
+  this.zoom = 1;
   // llena la lista de tipos documentales
   this.tiposDocumentales = this.lote.tdocumentales;
   // devuelve el valor del tipodocumental ya seleccionado para el lote
@@ -277,7 +335,57 @@ getLotes( colatrabajo:string, colaMsgQueue:string)
 
   // se crean los campos dinamicamente.
   this.fields = this.lote.lstKwXTemplate;
-  console.log(this.fields);
+  
+    this.form = new FormGroup({
+      fields: new FormControl(JSON.stringify(this.fields))
+    })
+    this.unsubcribe = this.form.valueChanges.subscribe((update) => {    
+      this.fields = JSON.parse(update.fields);
+      
+     this.formulario.focus();
+    });
+ });
+
+ }
+
+
+getLotes( colatrabajo:string, colaMsgQueue:string)
+{   
+  this.lote = [];
+  this.restService.getLotes(colatrabajo,colaMsgQueue).subscribe((datalote: {}) => {
+  this.lote = datalote;
+  console.log(this.lote);
+  // valores del lote obtenido
+  var binaryImg = atob(this.lote.valorimagenBytes);
+  var length = binaryImg.length;
+  var arrayBuffer = new ArrayBuffer(length);
+  var uintArray = new Uint8Array(arrayBuffer);
+  this.imagen = this.lote.valorimagenBytes;
+  if(this.imagen == '') this.showWarning();
+  this.NombreDocumento = this.lote.NombreDocumento;
+  this.IdLote = this.lote.idLote;
+  this.IdDocumento= this.lote.idDocumento;
+  this.indexDocActual = this.lote.indexDocActual;
+  this.CantidadDocumentos = this.lote.totalDocumentos;
+  for (var i = 0; i < length; i++) {uintArray[i] = binaryImg.charCodeAt(i);}
+  var currentBlob = new Blob([uintArray], {type: 'application/pdf'});
+  this.pdfSrc =  URL.createObjectURL(currentBlob);
+
+    //renderiza la imagen de entrada a la pantalla
+  this.zoom = 1;
+  // llena la lista de tipos documentales
+  this.tiposDocumentales = this.lote.tdocumentales;
+  // devuelve el valor del tipodocumental ya seleccionado para el lote
+  this.idTipoDocSelected = this.lote.idTipoDocumental;
+
+  // devuelve el valor del template ya seleccionado para el lote
+  this.ArrayTemplate = this.lote.getTemplates;
+  this.idTemplateSelected = this.lote.idTemplate;
+
+
+  // se crean los campos dinamicamente.
+  this.fields = this.lote.lstKwXTemplate;
+  
     this.form = new FormGroup({
       fields: new FormControl(JSON.stringify(this.fields))
     })
@@ -295,26 +403,18 @@ ngDistroy() {
   this.unsubcribe();
 }
 
-showSuccess() {
-  this.toastr.success('', 'Lote Guardado Exitosamente!');
-}
-showSuccessDescarte()
-{
-  this.toastr.success('','Documento Descartado Exitosamente!');
-}
-showErrorDescarte()
-{
-  this.toastr.success('','Erro al descartar el documento!');
-}
-showError()
-{
-  this.toastr.error('','Error al guardar el lote!')
+showSuccess(mensaje) {
+  this.toastr.success('', mensaje);
 }
 
-onKey(valor)
+showError(mensaje)
 {
-  console.log(valor);
+  this.toastr.error('',mensaje)
 }
+showWarning() {
+  this.toastr.warning('', 'No hay lotes disponibles!');
+}
+
 
 consultarLoteDisponible()
 {
@@ -326,17 +426,9 @@ onChangeTipoDocumental($event)
 {
   
   this.getTemplate($event.idTipoDocumental);
-  console.log($event);
+  
 }
-guardar( $event)
-{
- this.imagen = false;
- this.mostrarFormulario = false;
 
- this.getLotes(this.colatrabajo,this.colamsg);
- this.showSuccess();
- 
-}
 
 getTemplate(idTipoDocumental:any)
 {
@@ -346,6 +438,7 @@ getTemplate(idTipoDocumental:any)
   this.template = [];
   this.restService.getTemplate(idTipoDocumental).subscribe((datatemplate: {}) => {
   this.template = datatemplate;
+
      // devuelve el valor del template ya seleccionado para el lote
      this.ArrayTemplate = this.template.getTemplates;
      this.idTemplateSelected = this.template.idTemplate;
@@ -357,9 +450,7 @@ getTemplate(idTipoDocumental:any)
        this.unsubcribe = this.form.valueChanges.subscribe((update) => {    
          this.fields = JSON.parse(update.fields);
        });
-      console.log(this.idTipoDocSelected);
-      console.log(this.template);
-
+ 
   });
 
    
@@ -367,17 +458,6 @@ getTemplate(idTipoDocumental:any)
 
 
   @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent;
-
- 
-  private extractDataLote(res: Response) {
-    let body = res;
-    return body || { };
-  }
-  private extractDataTemplate(res: Response) {
-    let body = res;
-    return body || { };
-  }
-
 
 
   toggleOutline() {
@@ -387,22 +467,18 @@ getTemplate(idTipoDocumental:any)
   incrementPage(amount: number) {
     
       this.page +=  amount;  
-     console.log(this.page+=amount);
-  
-    // interval(500);
-    
-   
+
   }
 
   incrementZoom(amount: number) {
     this.zoom += amount;
-    console.log(this.zoom);
+
   }
   onKeyDown(e:any)
   {
     if(e.keyCode == 13 && e.ctrlKey)
     alert('Ctrl+Enter');
-    console.log(event);
+
   }
 
   rotate(angle: number) {
@@ -420,7 +496,7 @@ getTemplate(idTipoDocumental:any)
 
       reader.onload = (e: any) => {
         this.pdfSrc = e.target.result;
-        console.log(this.pdfSrc);
+       
       };
 
       reader.readAsArrayBuffer($pdf.files[0]);
@@ -507,9 +583,12 @@ getTemplate(idTipoDocumental:any)
    * Scroll view
    */
   scrollToPage() {
+  
     this.pdfComponent.pdfViewer.scrollPageIntoView({
       pageNumber: 3,
     });
+
+
   }
 
   /**
@@ -518,7 +597,7 @@ getTemplate(idTipoDocumental:any)
    * @param {CustomEvent} e
    */
   pageRendered(e: CustomEvent) {
-    console.log('(page-rendered)', e);
+    // console.log('(page-rendered)', e);
   }
 
   searchQueryChanged(newQuery: string) {

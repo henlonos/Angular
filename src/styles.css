@@ -17,7 +17,7 @@ legend.scheduler-border {
 }
 
 .scrollformdinamico {
-    height: 75%;
+    height: 60vh;
     overflow-y: scroll;
     margin-bottom: 5%;
 }
