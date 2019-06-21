@@ -88,25 +88,41 @@ export class ColasTrabajoComponent implements OnInit {
   modalOptions: NgbModalOptions = {};
   pdfSrc: string | PDFSource | ArrayBuffer;
   @ViewChild('pdfv') public target: ElementRef;
+  @HostListener('paste',['$event'])blockPaste(e:KeyboardEvent)
+  {
+    e.preventDefault();
+  }
+  @HostListener('copy',['$event'])blockCopy(e:KeyboardEvent)
+  {
+    e.preventDefault();
+  }
+  @HostListener('cut',['$event'])blockCut(e:KeyboardEvent)
+  {
+    e.preventDefault();
+  }
   @HostListener('window:keydown', ['$event'])handleKeyboardEvent(e) {
   this.keypressed = e.keyCode;
-  console.log(this.keypressed);
+
   if(((e.shiftKey && this.keypressed == 189) || (e.shiftKey && this.keypressed == 109)) && this.pdfSrc != "" )
   {
+    e.preventDefault();
      this.zoom += -0.1;
 
   }
   if((e.shiftKey  &&  this.keypressed == 75) && this.pdfSrc != "" )
   {
+    e.preventDefault();
     this.target.nativeElement.scrollTop += 20;
   }
   if((e.shiftKey  &&  this.keypressed == 73) && this.pdfSrc != "" )
   {
+    e.preventDefault();
     this.target.nativeElement.scrollTop -= 20;
   }
 
   if(((e.shiftKey && this.keypressed == 107) || (e.shiftKey &&this.keypressed == 187)) && this.pdfSrc != "" )
   {
+    e.preventDefault();
      this.zoom += 0.1;
   }
   if((e.shiftKey && this.keypressed == 37) && this.pdfSrc != "" )

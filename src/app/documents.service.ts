@@ -6,9 +6,9 @@ import { map, catchError, tap } from 'rxjs/operators';
 
 
 //const endpoint1 = 'http://localhost:56121/api/';
-const endpoint = 'http://localhost:56121/api/';
+// const endpoint = 'http://localhost:56121/api/';
 
-//  const endpoint = 'http://172.20.15.127/WebApiSegura/api/';
+ const endpoint = 'http://172.20.15.127/WebApiSegura/api/';
 const httpOptions = {
 
 };
