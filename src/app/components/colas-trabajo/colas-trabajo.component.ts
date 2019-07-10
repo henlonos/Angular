@@ -48,6 +48,7 @@ export class ColasTrabajoComponent implements OnInit {
 
   // variables carga lote y datos necesario para mostrar la imagen  y sus campos
   pdfQuery = '';
+  primerCaptura:any;
   mostrarimagen:boolean;
   mostrarFormulario: boolean;
   mostrarok:boolean;
@@ -82,6 +83,7 @@ export class ColasTrabajoComponent implements OnInit {
 
   // se declaran para hacer focus en el ngselect1 de colas al inicio del componente.
   @ViewChild('ngselect1') select: NgSelectComponent;
+  @ViewChild('ngselectTipodocumental') selectTipodoc : NgSelectComponent;
   @ViewChild('campos') formulario : NgSelectComponent;
   @ViewChild('modalDescarte') modaldescarte:ElementRef ;
   @ViewChild('descarte') NgSelectModule;
@@ -102,7 +104,7 @@ export class ColasTrabajoComponent implements OnInit {
   }
   @HostListener('window:keydown', ['$event'])handleKeyboardEvent(e) {
   this.keypressed = e.keyCode;
-
+  console.log(this.keypressed);
   if(((e.shiftKey && this.keypressed == 189) || (e.shiftKey && this.keypressed == 109)) && this.pdfSrc != "" )
   {
     e.preventDefault();
@@ -137,10 +139,40 @@ export class ColasTrabajoComponent implements OnInit {
   {
     this.modalOptions.backdrop='static';
     this.modalOptions.keyboard=false;
-
+    
     this.modalService.open(this.modaldescarte,this.modalOptions);
 
   }
+
+  if(this.keypressed == 113 && this.pdf != "")
+  {
+    this.page +=  1;  
+  }
+
+  if(this.keypressed == 115 && this.pdf != "")
+  {
+    this.page +=  -1;  
+  }
+  if (e.shiftKey && this.keypressed == 74 &&  this.pdfSrc != "") {
+    
+          e.preventDefault();      
+    
+          console.log(this.keypressed);
+    
+          this.target.nativeElement.scrollLeft -= 20;
+    
+        }
+    
+        if (e.shiftKey && this.keypressed == 76 &&  this.pdfSrc != "") {
+    
+          e.preventDefault();
+    
+          console.log(this.keypressed);
+    
+          this.target.nativeElement.scrollLeft += 20;
+    
+        }
+    
 
 
 }
@@ -148,9 +180,9 @@ export class ColasTrabajoComponent implements OnInit {
   
 
   constructor(private toastr: ToastrService,private renderer: Renderer,  private modalService: NgbModal,private activatedRoute:ActivatedRoute, private restService: DocumentsService, private image:ImageViewerModule ) { 
-
+ 
     this.getColas();     
-    
+    this.limpiarLocalStorage();
     this.getMotivosDescarte();
 
   }
@@ -159,6 +191,13 @@ ngOnInit() {
  
 }
 
+limpiarLocalStorage()
+{
+  localStorage.removeItem("arrayDocumentos");
+  localStorage.removeItem("idDocs");
+  localStorage.removeItem("primerCaptura");
+  localStorage.removeItem("ValorTipodoc");
+}
 
 onChange($event) {
 
@@ -166,7 +205,7 @@ onChange($event) {
  this.colamsg = $event.colaMsgQueue;
  this.imagen = "";
  this.getLotes($event.nombreCola,$event.colaMsgQueue)
-
+ this.limpiarLocalStorage();
  
 }
 CerrarModal()
@@ -178,7 +217,7 @@ guardarDescarte()
 {
   this.imagen = false;
   this.mostrarFormulario = false;
-
+   
    let datoslote = {
     datosFormulario : "",
     idlote:this.IdLote,
@@ -192,29 +231,36 @@ guardarDescarte()
   
   }
 
-  // console.log(datoslote.motivoDescarte);
+  this.validarlotecantidadDocumentos('',this.motivoSelected);
+  this.CerrarModal();
+  // // console.log(datoslote.motivoDescarte);
   
-  this.guardarlote = this.restService.postGuardarLote(datoslote).subscribe((dataguardar: {}) => {
-  this.procesoOK = dataguardar;
-  if(this.procesoOK)
-  {
-    this.mensajetoast = 'Documento Descartado Exitosamente!';
-    this.showSuccess(this.mensajetoast);
-    this.CerrarModal();
-    this.getLotes(this.colatrabajo,this.colamsg);
+  // this.guardarlote = this.restService.postGuardarLote(datoslote).subscribe((dataguardar: {}) => {
+  // this.procesoOK = dataguardar;
+  // if(this.procesoOK)
+  // {
+  //   this.mensajetoast = 'Documento Descartado Exitosamente!';
+  //   this.showSuccess(this.mensajetoast);
+  //   this.CerrarModal();
+  //   this.getLotes(this.colatrabajo,this.colamsg);
     
-  }
-  else{
-    this.mensajetoast = 'Documento no fue descartado!'
-    this.showError(this.mensajetoast);
-  }
+  // }
+  // else{
+  //   this.mensajetoast = 'Documento no fue descartado!'
+  //   this.showError(this.mensajetoast);
+  // }
   
 
-  } );
+  // } );
 }
 
 displayform(f) {
 
+  this.validarlotecantidadDocumentos(f,'');
+}
+
+validarlotecantidadDocumentos(f,movitoDescarte)
+{
   let datoslote = {
     datosFormulario : f,
     idlote:this.IdLote,
@@ -224,7 +270,7 @@ displayform(f) {
     usuario: localStorage.getItem("usuario"),
     proceso:'captura',
     categoria:'indexacion',
-    movitoDescarte:""
+    movitoDescarte: movitoDescarte
   }
  
   if(this.indexDocActual == this.CantidadDocumentos)
@@ -238,17 +284,29 @@ displayform(f) {
     this.procesoOK = dataguardar;
     if(this.procesoOK)
     {
-      this.mensajetoast = 'Lote Guardado Exitosamente!'
+      if (this.motivosDescarte != '')
+      {
+        this.mensajetoast = 'Documento Descartado Exitosamente!';
+      }
+      else{
+        this.mensajetoast = 'Lote Guardado Exitosamente!'
+      }
+     
     
       this.showSuccess(this.mensajetoast);
       this.getLotes(this.colatrabajo,this.colamsg);
-      localStorage.removeItem("arrayDocumentos");
-      localStorage.removeItem("idDocs");
+      this.limpiarLocalStorage();
 
 
     }
     else{
-      this.mensajetoast = 'No fue posible guardar el lote!'
+      if (this.motivosDescarte != ''){
+        this.mensajetoast = 'Documento no fue descartado!'
+      }
+      else{
+        this.mensajetoast = 'No fue posible guardar el lote!'
+      }
+      
       this.showError(this.mensajetoast);
     }
     
@@ -265,6 +323,7 @@ displayform(f) {
       else localStorage.setItem("idDocs",this.iddocumentosLote+'*'+this.IdDocumento);
 
       this.validarLote(localStorage.getItem("idDocs").toString(),this.IdLote);
+      this.selectTipodoc.focus();
       
   }
 
@@ -297,6 +356,8 @@ getMotivosDescarte()
     this.motivosDescarte = data;
 
 
+
+
   });
 }
 
@@ -305,6 +366,7 @@ getColas() {
  this.restService.getColas().subscribe((data: {}) => {
   
    this.colas = data;
+   console.log(this.colas);
   
  if(this.imagen != "")
  {
@@ -386,7 +448,7 @@ getLotes( colatrabajo:string, colaMsgQueue:string)
   for (var i = 0; i < length; i++) {uintArray[i] = binaryImg.charCodeAt(i);}
   var currentBlob = new Blob([uintArray], {type: 'application/pdf'});
   this.pdfSrc =  URL.createObjectURL(currentBlob);
-
+  localStorage.setItem("primerCaptura","1");
     //renderiza la imagen de entrada a la pantalla
   this.zoom = 1;
   // llena la lista de tipos documentales
@@ -441,8 +503,31 @@ consultarLoteDisponible()
 onChangeTipoDocumental($event)
 {
   
-  this.getTemplate($event.idTipoDocumental);
+  this.primerCaptura = localStorage.getItem("primerCaptura")
+  if(localStorage.getItem("primerCaptura") == "1")
+  {
+    localStorage.setItem("primerCaptura","2");
+    localStorage.setItem("ValorTipodoc",$event.idTipoDocumental);
+    this.selectTipodoc.focus();
+    this.idTipoDocSelected = "";
+    
+    
+     
+
+ 
+
+
+    
+
+  }
+  else if (localStorage.getItem("primerCaptura") == "2" && (localStorage.getItem("ValorTipodoc") == $event.idTipoDocumental))
+  {
+    this.getTemplate($event.idTipoDocumental);
+    localStorage.removeItem("primerCaptura");
+    localStorage.removeItem("ValorTipodoc");
+  }
   
+
 }
 
 
@@ -452,7 +537,8 @@ getTemplate(idTipoDocumental:any)
   this.idTemplateSelected = "";
   this.fields = [];
   this.template = [];
-  this.restService.getTemplate(idTipoDocumental).subscribe((datatemplate: {}) => {
+  this.categoria = 'indexacion'
+  this.restService.getTemplate(idTipoDocumental,this.IdDocumento,this.categoria).subscribe((datatemplate: {}) => {
   this.template = datatemplate;
 
      // devuelve el valor del template ya seleccionado para el lote

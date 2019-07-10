@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
-
+import { environment } from 'src/environments/environment';
 
 
 //const endpoint1 = 'http://localhost:56121/api/';
-// const endpoint = 'http://localhost:56121/api/';
+const endpoint = environment.endpoint;
 
- const endpoint = 'http://172.20.15.127/WebApiSegura/api/';
+//  const endpoint = 'http://172.20.15.127/WebApiSegura/api/';
 const httpOptions = {
 
 };
@@ -61,9 +61,9 @@ private extractGuardarlote(res:Response)
     );
   }
 
-  getTemplate(idTipoDocumental)
+  getTemplate(idTipoDocumental,iddocumento,categoria)
   {
-    return this.http.get(endpoint+ 'TipoDocXTemplate/getTemplate?idTipoDocumental='+idTipoDocumental,httpOptions).pipe(
+    return this.http.get(endpoint+ 'TipoDocXTemplate/getTemplate?idTipoDocumental='+idTipoDocumental+"&idDocumento="+iddocumento+"&categoria="+categoria,httpOptions).pipe(
       map(this.extractDataTemplate));
   }
   
@@ -89,7 +89,7 @@ private extractGuardarlote(res:Response)
   console.log(this.httpOptions)
 
     let params = "json="+json;
-    return this.http.post(endpoint + 'Lote/guardar', datosLote,this.httpOptions).pipe(map(this.extractData));
+    return this.http.post(endpoint + 'Lote/guardar', datosLote).pipe(map(this.extractData));
   }
 
 isloggedin()

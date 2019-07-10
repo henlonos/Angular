@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class LoginComponent implements OnInit {
   form: FormGroup;
   private formSubmitAttempt: boolean;
-  endpoint = 'http://172.20.15.127/WebApiSegura/api/';
+  // endpoint = 'http://172.20.15.127/WebApiSegura/api/';
+  endpoint = environment.endpoint;
   token;
   constructor(private router:Router, 
     private fb: FormBuilder,

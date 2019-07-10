@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  endpoint:'http://172.20.15.127/WebApiSegura/api/'
 };
