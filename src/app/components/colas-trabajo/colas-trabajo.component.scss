@@ -62,16 +62,22 @@ input {
 }
 
 .outline {
-    position: fixed;
-    left: 0;
-    top: 0;
+    position: absolute;
+    left: 15px;
+    top: 45px;
     padding: 60px 5px 5px;
-    height: 100vh;
+    height: 65vh;
     width: 250px;
+    display: block;
     z-index: 9000;
     box-shadow: 3px 0px 5px 0px rgba(0, 0, 0, 0.75);
     background: white;
     ul {
         padding-left: 25px;
     }
+}
+
+.thumbnails {
+    height: 100%;
+    width: 100%;
 }

@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { SweetMessageService } from 'src/app/sweet-message.service';
+
 
 @Component({
   selector: 'app-login',
@@ -19,7 +21,8 @@ export class LoginComponent implements OnInit {
   constructor(private router:Router, 
     private fb: FormBuilder,
     private http: HttpClient,
-    private toastr: ToastrService) 
+    private toastr: ToastrService,
+    private message:SweetMessageService) 
     { }
 
   ngOnInit() {
@@ -40,6 +43,7 @@ showError()
 }
 onSubmit(formulario)
   {
+    this.message.showLoading();
     let credentials = {
       userName : formulario.usuario,
       password : formulario.clave     
@@ -50,6 +54,7 @@ onSubmit(formulario)
           return this.http.post(this.endpoint + 'login/authenticate', credentials)
           .subscribe(data => 
             { 
+              this.message.close();
               this.token = data;
               console.log("POST Request is successful", data) ;
               localStorage.setItem('token', this.token);  
@@ -57,7 +62,7 @@ onSubmit(formulario)
     
               this.router.navigateByUrl("/colas");
           },
-          error => { this.showError() }
+          error => { this.message.showError("usuario o contraseña incorrecta y/o usuario logueado en otra maquina") }
           );
              
         }

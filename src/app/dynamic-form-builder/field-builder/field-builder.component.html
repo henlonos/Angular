@@ -12,8 +12,8 @@
         <file *ngSwitchCase="'file'" [field]="field" [form]="form"></file>
         <div class="alert alert-danger my-1 p-2 fadeInDown animated" *ngIf="!isValid && isTouched">
             <div *ngIf="isRequired">{{field.label}} es requerido</div>
-            <div *ngIf="hasNotFormat">{{ field.label }} no tiene el formato correcto </div>
-            <div *ngIf="NoMatch">{{ field.label }} No match </div>
+            <div *ngIf="hasNotFormat ">{{ field.label }} no tiene el formato correcto </div>
+            <div *ngIf="NoMatch ">{{ field.label }} No match </div>
         </div>
     </div>
 </div>

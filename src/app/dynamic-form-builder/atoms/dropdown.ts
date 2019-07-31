@@ -6,8 +6,8 @@ import { FieldsFunctionalityService } from 'src/app/fields-functionality.service
     selector: 'dropdown',
     template: `
       <div [formGroup]="form">
-        <select class="form-control form-control-sm" [id]="field.name" [formControlName]="field.name"
-        (keydown)="this.fieldService.validateFieldRecapture(field, form)">
+        <select  class="form-control form-control-sm" [id]="field.name" [formControlName]="field.name"
+        (keyup)="this.fieldService.validateFieldRecapture(field, form)" #field.name>
           <option *ngFor="let opt of field.options" [value]="opt.key">{{opt.label}}</option>
         </select>
       </div> 

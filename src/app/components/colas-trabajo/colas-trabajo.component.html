@@ -1,6 +1,90 @@
 <div class="p-2">
     <div class="row m-2">
 
+        <ng-template #dataadicional let-modal>
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Data Adicional</h5>
+
+            </div>
+            <div class="modal-body">
+                <table class="table-responsive">
+                    <tr class="thead-dark">
+                        <th *ngFor="let col of columnas">
+                            {{col}}
+                        </th>
+                    </tr>
+                    <tr *ngFor="let char of data ">
+                        <td *ngFor="let col of columnas">
+                            {{char[col]}}
+                        </td>
+                        <td><input type="checkbox" data-md-icheck (change)="toggleVisibility($event,char.IdDocumento)" /></td>
+
+                    </tr>
+                </table>
+                <br>
+                <div class="input-group mb-3">
+                    <input type="text" *ngIf="imagenAdicional" placeholder="Ingrese numero de identificacion " class="form-control" (change)="copiarIdCliente($event)" />
+                    <div class="input-group-append">
+                        <button type="button" *ngIf="imagenAdicional" class="btn btn-primary" (click)="copiarIdCliente($event)">Copiar</button>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div *ngIf="imagenAdicional" class="col col-md-12 col-md-12 ">
+                <input (change)="onFileSelected()" type="file" id="file" class="d-none" accept=".pdf" />
+                <div class="toolbar d-flex">
+                    <!-- <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-open_in_browser-24px.svg'" (click)="openLocalFile()" title="Open File"></span> -->
+                    <!-- <span class="my-icon" [ngClass]="{ active: isOutlineShown }" [inlineSVG]="'/assets/icon/baseline-toc-24px.svg'" (click)="toggleOutline()" title="Toggle Outline"></span> -->
+                    <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-rotate_left-24px.svg'" (click)="rotate(-90)" title="Rotate Left"></span>
+                    <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-rotate_right-24px.svg'" (click)="rotate(90)" title="Rotate Right"></span>
+                    <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-zoom_in-24px.svg'" (click)="incrementZoom(0.1)" title="Zoom In"></span>
+                    <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-zoom_out-24px.svg'" (click)="incrementZoom(-0.1)" title="Zoom Out"></span>
+                    <span class="my-icon" [ngClass]="{ active: fitToPage }" [inlineSVG]="'/assets/icon/baseline-insert_drive_file-24px.svg'" (click)="fitToPage = !fitToPage" title="Toggle Fit Page"></span>
+                    <span class="my-icon" [ngClass]="{ active: showAll }" [inlineSVG]="'/assets/icon/baseline-multi-pages-24px.svg'" (click)="showAll = !showAll" title="Toggle Show All"></span>
+
+                    <ng-container *ngIf="!showAll">
+                        <span class="my-icon ml-auto" [inlineSVG]="'/assets/icon/baseline-navigate_before-24px.svg'" (click)="incrementPage(-1)" title="Previous Page"></span>
+                        <div>
+                            <input type="number" class="page-num" placeholder="Page" [(ngModel)]="page" pattern="-?[0-9]*(\.[0-9]+)?" tabindex="2" />
+                            <span *ngIf="pdf">of {{ pdf.numPages }}</span>
+                        </div>
+                        <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-navigate_next-24px.svg'" (click)="incrementPage(1)" title="Next Page"></span>
+                    </ng-container>
+
+                    <label class="my-icon ml-auto" [inlineSVG]="'/assets/icon/baseline-search-24px.svg'" for="searchbox" title="Search.."></label>
+                    <input #queryInp type="text" id="searchbox" name="searchbox" class="searchbox mr-5" placeholder="Search..." [value]="pdfQuery" tabindex="3" (input)="searchQueryChanged($event.target.value)" (keyup.enter)="searchQueryChanged(queryInp.value)" />
+                </div>
+                <div class="pdf-body">
+                    <div *ngIf="isOutlineShown" class="outline">
+                        <ul *ngFor="let item of outline" class="outline-list">
+                            <li>
+                                <a (click)="navigateTo(item.dest)"> {{ item.title }} </a>
+
+                                <ul *ngFor="let child of item.items">
+                                    <li>
+                                        <a (click)="navigateTo(child.dest)"> {{ child.title }} </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="overflow: scroll" #pdfv1>
+                        <pdf-viewer (keydown)="onKeyDown($event)" [src]="pdfSrcdataadicional" [(page)]="page" [rotation]="rotation" [original-size]="originalSize" [fit-to-page]="fitToPage" (after-load-complete)="afterLoadComplete($event)" [zoom]="zoom" [show-all]="showAll" [stick-to-page]="stickToPage"
+                            [render-text]="renderText" [external-link-target]="'blank'" [autoresize]="autoresize" (error)="onError($event)" (on-progress)="onProgress($event)" (page-rendered)="pageRendered($event)" style="display: block;height:65vh; "></pdf-viewer>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="CerrarModalDataAdicional()">Cerrar</button>
+
+            </div>
+
+
+        </ng-template>
         <ng-template #modalDescarte let-modal>
 
             <div class="modal-header">
@@ -27,13 +111,14 @@
 
 
     <div class="row m-2">
-        <div *ngIf="indexDocActual" class="alert-secondary m-2" role="alert" style="margin-bottom:1px; width:65%">
+        <div *ngIf="imagen" class="alert-secondary m-2" role="alert" style="margin-bottom:1px; width:65%">
             <!-- <span style="width: 20%;margin-right: 0px; ">TotalDocumentos: {{indexDocActual}}/{{CantidadDocumentos}}</span>
          -->
             <!-- </div>
         <div class=" m-1 badge badge-light" *ngIf="imagen"> -->
 
-            <span><b>NombreDocumento:</b>  {{ NombreDocumento}}   //    <b>IdLote: </b>  {{ IdLote}}   //   <b>IdDocumento:</b>   {{ IdDocumento }} // TotalDocumentos: {{indexDocActual}}/{{CantidadDocumentos}}</span>
+            <span><b>NombreDocumento:</b> {{ NombreDocumento}} // <b>IdLote: </b> {{ IdLote}} // <b>IdDocumento:</b>
+                {{ IdDocumento }} // TotalDocumentos: {{indexDocActual}}/{{CantidadDocumentos}}</span>
 
 
 
@@ -56,7 +141,7 @@
             <input (change)="onFileSelected()" type="file" id="file" class="d-none" accept=".pdf" />
             <div class="toolbar d-flex">
                 <!-- <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-open_in_browser-24px.svg'" (click)="openLocalFile()" title="Open File"></span> -->
-                <!-- <span class="my-icon" [ngClass]="{ active: isOutlineShown }" [inlineSVG]="'/assets/icon/baseline-toc-24px.svg'" (click)="toggleOutline()" title="Toggle Outline"></span> -->
+                <span class="my-icon" [ngClass]="{ active: isOutlineShown }" [inlineSVG]="'/assets/icon/baseline-toc-24px.svg'" (click)="toggleOutline()" title="Toggle Outline"></span>
                 <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-rotate_left-24px.svg'" (click)="rotate(-90)" title="Rotate Left"></span>
                 <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-rotate_right-24px.svg'" (click)="rotate(90)" title="Rotate Right"></span>
                 <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-zoom_in-24px.svg'" (click)="incrementZoom(0.1)" title="Zoom In"></span>
@@ -78,7 +163,10 @@
             </div>
             <div class="pdf-body">
                 <div *ngIf="isOutlineShown" class="outline">
-                    <ul *ngFor="let item of outline" class="outline-list">
+                    <div class="thumbnails" style="overflow: scroll">
+                        <pdf-viewer [src]="pdfSrc" [page]="page" [original-size]="false" draggable="pdfsrc" style="display: block;height:15vh; "></pdf-viewer>
+                    </div>
+                    <!-- <ul *ngFor="let item of outline" class="outline-list">
                         <li>
                             <a (click)="navigateTo(item.dest)"> {{ item.title }} </a>
 
@@ -88,39 +176,36 @@
                                 </li>
                             </ul>
                         </li>
-                    </ul>
+                    </ul> -->
                 </div>
 
                 <div style="overflow: scroll" #pdfv>
                     <pdf-viewer (keydown)="onKeyDown($event)" [src]="pdfSrc" [(page)]="page" [rotation]="rotation" [original-size]="originalSize" [fit-to-page]="fitToPage" (after-load-complete)="afterLoadComplete($event)" [zoom]="zoom" [show-all]="showAll" [stick-to-page]="stickToPage"
-                        [render-text]="renderText" [external-link-target]="'blank'" [autoresize]="autoresize" (error)="onError($event)" (on-progress)="onProgress($event)" (page-rendered)="pageRendered($event)" style="display: block;height:85vh; "></pdf-viewer>
+                        [render-text]="renderText" [external-link-target]="'blank'" [autoresize]="autoresize" (error)="onError($event)" (on-progress)="onProgress($event)" (page-rendered)="pageRendered($event)" style="display: block;height:65vh; "></pdf-viewer>
                 </div>
             </div>
         </div>
 
         <div *ngIf="imagen" class="col col-md-4 col-md-4">
 
-            <div class="card" style="width: 25rem;background-color: #f0f0f0;">
+            <div class="card" style="width:30vw;background-color: #f0f0f0;">
                 <div class="card-body">
                     <div class="form-group">
                         <h6 [ngStyle]="{'color': primerCaptura === '1' ? 'red' : 'black' }">Tipo Documental</h6>
 
                         <ng-select [items]="tiposDocumentales" bindLabel="NombreTipoDocumental" bindValue="idTipoDocumental" [(ngModel)]="idTipoDocSelected" style="width:100%; " placeholder="Tipo Documental" (change)="onChangeTipoDocumental($event)" #ngselectTipodocumental>
                         </ng-select>
-
-
-
                     </div>
                     <div class="form-group">
                         <h6>Template</h6>
-                        <ng-select [items]="ArrayTemplate" bindLabel="NombreTemplate" bindValue="idtemplate_" [(ngModel)]="idTemplateSelected" style="width:100%" placeholder="Template"> </ng-select>
+                        <ng-select [items]="ArrayTemplate" bindLabel="NombreTemplate" bindValue="idtemplate_" [(ngModel)]="idTemplateSelected" style="width:100%" placeholder="Template" #ngSelectTemplate> </ng-select>
                     </div>
                 </div>
             </div>
             <br>
 
-            <div *ngIf="idTemplateSelected" class="scrollformdinamico">
-                <dynamic-form-builder (onSubmit)="displayform($event)" [fields]="fields"></dynamic-form-builder>
+            <div *ngIf="idTemplateSelected" class="scrollformdinamico" #divFormDinamico style="height:45vh">
+                <dynamic-form-builder (onSubmit)="displayform($event)" [fields]="fields" #field></dynamic-form-builder>
             </div>
 
         </div>

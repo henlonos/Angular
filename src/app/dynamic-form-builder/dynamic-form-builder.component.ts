@@ -61,6 +61,7 @@ export class DynamicFormBuilderComponent implements OnInit {
       if (f.type != 'checkbox') {   
         fieldsCtrls[f.name] = new FormControl(f.value || '', 
         Validators.compose(this.returnValidations(f)))
+        
         //Validators.required)
       } else {
         let opts = {};

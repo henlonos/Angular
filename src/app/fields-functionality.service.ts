@@ -8,6 +8,7 @@ export class FieldsFunctionalityService {
   constructor() { }
 
   validateFieldRecapture(field, form){  
+ 
     if(field.recapture){
       let origin = form.controls[field.validateField].value;
       let compare = form.controls[field.name].value;

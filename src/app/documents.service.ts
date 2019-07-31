@@ -79,6 +79,18 @@ private extractGuardarlote(res:Response)
     return this.http.get(endpoint+ 'Lote/ValidarLoteFull?IdDocs='+iddocumentos+'&idlote='+idlote ,httpOptions).pipe(
       map(this.extractDataLote));
   }
+
+  GetDocsXlote(idlote)
+  {
+    return this.http.get(endpoint+ 'Lote/getDocsxlote?idlote='+idlote ,httpOptions).pipe(
+      map(this.extractDataLote));
+  }
+
+  GetImagenxiddocumento (iddocumento)
+  {
+    return this.http.get(endpoint+ 'Imagen/getImagenxdocumento?iddocumento='+iddocumento ,httpOptions).pipe(
+      map(this.extractDataLote));
+  }
   postGuardarLote(datosLote)
   {
     console.log(datosLote);
