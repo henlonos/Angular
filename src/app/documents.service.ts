@@ -61,10 +61,20 @@ private extractGuardarlote(res:Response)
     );
   }
 
-  getTemplate(idTipoDocumental,iddocumento,categoria)
+  getTemplate(idTipoDocumental,iddocumento,categoria,xnumeroIdentificacion,xtipoIdentificacion,arrayTiempos,radicado)
   {
-    return this.http.get(endpoint+ 'TipoDocXTemplate/getTemplate?idTipoDocumental='+idTipoDocumental+"&idDocumento="+iddocumento+"&categoria="+categoria,httpOptions).pipe(
-      map(this.extractDataTemplate));
+
+    let datoslote = {
+      idTipodocumental: idTipoDocumental,
+      iddocumento: iddocumento,
+      categoria: categoria,
+      xNumeroIdentificacion: xnumeroIdentificacion,
+      xtipoIdentificacion: xtipoIdentificacion,
+      registrarTiempos: arrayTiempos,
+      radicado : radicado
+    };
+   // return this.http.get(endpoint+ 'TipoDocXTemplate/getTemplate?idTipoDocumental='+idTipoDocumental+"&idDocumento="+iddocumento+"&categoria="+categoria+'&xNumeroIdentificacion='+xnumeroIdentificacion+"&xTipoDocumentoIdentificacion="+xtipoIdentificacion+"&registrarTiempos="+json,httpOptions).pipe(
+      return this.http.post(endpoint+ 'TipoDocXTemplate/getTemplate',datoslote).pipe(map(this.extractDataTemplate));
   }
   
   getLotes( nombreCola,colaMsgqueue)
@@ -74,10 +84,35 @@ private extractGuardarlote(res:Response)
       map(this.extractDataLote));
   }
 
-  validarLoteFull(iddocumentos,idlote)
+  getLotexidlote(nombreCola,idlote,registrarTiempos)
   {
-    return this.http.get(endpoint+ 'Lote/ValidarLoteFull?IdDocs='+iddocumentos+'&idlote='+idlote ,httpOptions).pipe(
-      map(this.extractDataLote));
+    let data = {
+      idLote : idlote,
+      colatrabajo: nombreCola,
+      usuario:  localStorage.getItem("usuario"),
+      registrarTiempos:registrarTiempos
+    }
+    
+    //return this.http.get(endpoint+ 'Lote/ObtenerLotexIdLote?idlote='+idlote+'&usuario='+usuario+'&colaTrabajo='+nombreCola,httpOptions).pipe(
+    return this.http.post(endpoint+ 'Lote/ObtenerLotexIdLote',data,httpOptions).pipe(
+    map(this.extractDataLote));
+  }
+
+  validarLoteFull(iddocumentos,idlote,xnumeroIdentificacion,xtipoIdentificacion,registrarTiempos,Radicado)
+  {
+    let datosLote = {
+      IdDocs : iddocumentos,
+      idLote :idlote,
+      xNumeroIdentificacion :xnumeroIdentificacion,
+      xTipoDocumentoIdentificacion : xtipoIdentificacion,
+      registrarTiempos: registrarTiempos,
+      Radicado:Radicado
+
+
+    }
+   // return this.http.get(endpoint+ 'Lote/ValidarLoteFull?IdDocs='+iddocumentos+'&idlote='+idlote+'&xNumeroIdentificacion='+xnumeroIdentificacion+"&xTipoDocumentoIdentificacion="+xtipoIdentificacion ,httpOptions).pipe(
+    return this.http.post(endpoint+ 'Lote/ValidarLoteFull',datosLote,httpOptions).pipe(
+     map(this.extractDataLote));
   }
 
   GetDocsXlote(idlote)
@@ -93,12 +128,10 @@ private extractGuardarlote(res:Response)
   }
   postGuardarLote(datosLote)
   {
-    console.log(datosLote);
+  
     let json = JSON.stringify(datosLote);
-       
-    //El backend recogerá un parametro json
-
-  console.log(this.httpOptions)
+      console.log(datosLote);
+    //El backend recogerá un parametro jso
 
     let params = "json="+json;
     return this.http.post(endpoint + 'Lote/guardar', datosLote).pipe(map(this.extractData));

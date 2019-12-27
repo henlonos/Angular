@@ -2,6 +2,11 @@
 
 @import "~@ng-select/ng-select/themes/default.theme.css";
 @import '~ng2-toastr/bundles/ng2-toastr.min.css';
+.ng-select.custom ::ng-deep .ng-select-container {
+    min-height: 0px;
+    border-radius: 0;
+}
+
 fieldset.scheduler-border {
     border: 1px groove #ddd !important;
     padding: 0 1.4em 1.4em 1.4em !important;

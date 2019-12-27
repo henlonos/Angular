@@ -13,6 +13,7 @@ import { map, take } from 'rxjs/operators';
 export class MenuComponent implements OnInit {
   authenticate: any;
   isLoggedIn$: Observable<boolean>;
+  public isCollapsed = true; 
 
   constructor( private router:Router, private activatedRoute:ActivatedRoute,public service:DocumentsService) {
     

@@ -101,9 +101,177 @@
 
 
         </ng-template>
+        <ng-template #corregirData let-modal>
 
-        <ng-select *ngIf="colas" [items]="colas" bindLabel="nombreCola" bindValue="idCola" (change)="onChange($event)" style="width: 25%" placeholder="Colas trabajo" #ngselect1>
-        </ng-select>
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Corregir Informacion</h5>
+
+            </div>
+
+            <div class="modal-body">
+                <table class="table-responsive">
+                    <tr class="thead-dark">
+                        <th *ngFor="let col of columnas">
+                            {{col}}
+                        </th>
+                    </tr>
+                    <tr *ngFor="let char of data">
+                        <td *ngFor="let col of columnas">
+                            {{char[col]}}
+                        </td>
+
+
+                        <td><input type="checkbox" data-md-icheck (change)="toggleVisibilityCorreccion($event,char.IdDocumento)" /></td>
+
+                    </tr>
+                </table>
+                <br>
+                <div class="input-group mb-3" *ngIf="imagenAdicional">
+                    <div class="card-body" style="width:80vh">
+                        <div class="form-group">
+                            <h6 [ngStyle]="{'color': primerCaptura === '1' ? 'red' : 'black' }">Tipo Documental</h6>
+
+                            <ng-select [items]="tiposDocumentales" autoClose="true" bindLabel="NombreTipoDocumental" bindValue="idTipoDocumental" [(ngModel)]="idTipoDocCorreccionSelected" style="width:100%; " placeholder="Tipo Documental" (change)="onchangetipodoccorreccion($event)"
+                                #ngselectTipodocumentalCorreccion>
+                            </ng-select>
+                        </div>
+                        <div class="form-group">
+                            <h6>Template</h6>
+                            <ng-select [items]="ArrayTemplate" style="width:80vh" bindLabel="NombreTemplate" autoclose="true" bindValue="idtemplate_" [(ngModel)]="idTemplateCorreccionSelected" (change)="onChangeTemplate()" style="width:100%" placeholder="Template" #ngSelectTemplateCorreccion>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <!-- <table class="table table-hover"> -->
+                    <form #myForm="ngForm" class="form-group">
+
+                        <!-- <label *ngFor="let iddoc of iddocumentoCorrecion">{{iddoc.value}} -->
+                        <div *ngFor="let campo of datacambiar">
+                            <div *ngIf="campo[0] !== 'xTipoDocumentoIdentificacion' &&  campo[0] !== 'xTipoDocumentoIdentificacionrecaptura'">
+                                <div *ngIf="!campo[0].includes('recaptura')">
+                                    <label class="col-md-4 control-label">{{campo[0]}}</label>
+                                </div>
+                                <div class="col-md-8 ">
+                                    <div class="input-group">
+                                        <div *ngIf="campo[0] !== 'xFechaExpedicion' && campo[0] !== 'xFechaExpedicionrecaptura'">
+                                            <div *ngIf="!campo[0].includes('recaptura')">
+                                                <input placeholder="Full Name" style="width:80vh" id="{{campo[0]}}" name="{{campo[0]}}" [(ngModel)]="campo[1]" class="form-control input-group-lg" required="true" value="{{campo[1]}}" type="text">
+                                            </div>
+                                        </div>
+                                        <div *ngIf="campo[0] === 'xFechaExpedicion' || campo[0] === 'xFechaExpedicionrecaptura'">
+                                            <div *ngIf="!campo[0].includes('recaptura')">
+                                                <input placeholder="Full Name" style="width:80vh" id="{{campo[0]}}" name="{{campo[0]}}" [(ngModel)]="campo[1]" class="form-control input-group-lg" required="true" maxlength="10" value="{{campo[1]}}" type="text">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+
+                                <div *ngIf="campo[0] === 'xTipoDocumentoIdentificacion' || campo[0] === 'xTipoDocumentoIdentificacionrecaptura'">
+                                    <div *ngIf="!campo[0].includes('recaptura')">
+                                        <label class="col-md-4 control-label">{{campo[0]}}</label>
+                                    </div>
+                                    <div class="col-md-8 ">
+                                        <div *ngIf="!campo[0].includes('recaptura')">
+                                            <select class="form-control" style="width:80vh" id="{{campo[0]}}" [(ngModel)]="campo[1]" name="{{campo[0]}}">
+                                            <option value="{{campo[1]}}">{{campo[1]}}</option>
+                                            <option *ngIf="campo[1] !== 'CEDULA DE CIUDADANIA'" value="CEDULA DE CIUDADANIA">CEDULA DE CIUDADANIA</option>
+                                            <option *ngIf="campo[1] !== 'CEDULA DE EXTRANJERIA'" value="CEDULA DE EXTRANJERIA">CEDULA DE EXTRANJERIA</option>
+                                            <option *ngIf="campo[1] !== 'REGISTRO CIVIL'" value="REGISTRO CIVIL">REGISTRO CIVIL</option>
+                                            <option *ngIf="campo[1] !== 'CARNE DIPLOMATICO'" value = '4' >CARNE DIPLOMATICO</option>
+                                            <option *ngIf="campo[1] !== 'NIT'" value = 'NIT' >NIT</option>
+                                            <option *ngIf="campo[1] !== 'TARJETA DE IDENTIDAD'" value = 'TARJETA DE IDENTIDAD' >TARJETA DE IDENTIDAD</option>
+                                            <option *ngIf="campo[1] !== 'PASAPORTE'" value = 'PASAPORTE' >PASAPORTE</option>
+                                            <option *ngIf="campo[1] !== 'ID EXTRANJERO PN NO RESIDENTE EN COLOMBIA'" value = 'ID EXTRANJERO PN NO RESIDENTE EN COLOMBIA' >ID EXTRANJERO PN NO RESIDENTE EN COLOMBIA</option>
+                                            <option *ngIf="campo[1] !== 'FIDEICOMISO'" value = 'FIDEICOMISO' >FIDEICOMISO</option>
+                                            <option *ngIf="campo[1] !== 'ID EXTRANJERO PJ NO RESIDENTE EN COLOMBIA'" value = 'ID EXTRANJERO PJ NO RESIDENTE EN COLOMBIA' >ID EXTRANJERO PJ NO RESIDENTE EN COLOMBIA</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <br>
+                        <!-- <button type="submit"  (onSubmit)="correcciones($event)">Guardar</button> -->
+                        <button class="btn btn-primary" (click)="submitForm(myForm.controls)" style="width:50vh">
+                        Guardar
+                      </button>
+                        <!-- </label> -->
+                    </form>
+
+                </div>
+
+                <br>
+                <div *ngIf="imagenAdicional" class="col col-md-12 col-md-12 ">
+                    <input (change)="onFileSelected()" type="file" id="file" class="d-none" accept=".pdf" />
+                    <div class="toolbar d-flex">
+                        <!-- <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-open_in_browser-24px.svg'" (click)="openLocalFile()" title="Open File"></span> -->
+                        <!-- <span class="my-icon" [ngClass]="{ active: isOutlineShown }" [inlineSVG]="'/assets/icon/baseline-toc-24px.svg'" (click)="toggleOutline()" title="Toggle Outline"></span> -->
+                        <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-rotate_left-24px.svg'" (click)="rotate(-90)" title="Rotate Left"></span>
+                        <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-rotate_right-24px.svg'" (click)="rotate(90)" title="Rotate Right"></span>
+                        <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-zoom_in-24px.svg'" (click)="incrementZoom(0.1)" title="Zoom In"></span>
+                        <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-zoom_out-24px.svg'" (click)="incrementZoom(-0.1)" title="Zoom Out"></span>
+                        <span class="my-icon" [ngClass]="{ active: fitToPage }" [inlineSVG]="'/assets/icon/baseline-insert_drive_file-24px.svg'" (click)="fitToPage = !fitToPage" title="Toggle Fit Page"></span>
+                        <span class="my-icon" [ngClass]="{ active: showAll }" [inlineSVG]="'/assets/icon/baseline-multi-pages-24px.svg'" (click)="showAll = !showAll" title="Toggle Show All"></span>
+
+                        <ng-container *ngIf="!showAll">
+                            <span class="my-icon ml-auto" [inlineSVG]="'/assets/icon/baseline-navigate_before-24px.svg'" (click)="incrementPage(-1)" title="Previous Page"></span>
+                            <div>
+                                <input type="number" class="page-num" placeholder="Page" [(ngModel)]="page" pattern="-?[0-9]*(\.[0-9]+)?" tabindex="2" />
+                                <span *ngIf="pdf">of {{ pdf.numPages }}</span>
+                            </div>
+                            <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-navigate_next-24px.svg'" (click)="incrementPage(1)" title="Next Page"></span>
+                        </ng-container>
+
+                        <label class="my-icon ml-auto" [inlineSVG]="'/assets/icon/baseline-search-24px.svg'" for="searchbox" title="Search.."></label>
+                        <input #queryInp type="text" id="searchbox" name="searchbox" class="searchbox mr-5" placeholder="Search..." [value]="pdfQuery" tabindex="3" (input)="searchQueryChanged($event.target.value)" (keyup.enter)="searchQueryChanged(queryInp.value)" />
+                    </div>
+                    <div class="pdf-body">
+                        <div *ngIf="isOutlineShown" class="outline">
+                            <ul *ngFor="let item of outline" class="outline-list">
+                                <li>
+                                    <a (click)="navigateTo(item.dest)"> {{ item.title }} </a>
+
+                                    <ul *ngFor="let child of item.items">
+                                        <li>
+                                            <a (click)="navigateTo(child.dest)"> {{ child.title }} </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div style="overflow: scroll" #pdfv1>
+                            <pdf-viewer (keydown)="onKeyDown($event)" [src]="pdfSrcdataadicional" [(page)]="page" [rotation]="rotation" [original-size]="originalSize" [fit-to-page]="fitToPage" (after-load-complete)="afterLoadComplete($event)" [zoom]="zoom" [show-all]="showAll" [stick-to-page]="stickToPage"
+                                [render-text]="renderText" [external-link-target]="'blank'" [autoresize]="autoresize" (error)="onError($event)" (on-progress)="onProgress($event)" (page-rendered)="pageRendered($event)" style="display: block;height:65vh; "></pdf-viewer>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="CerrarModalDataAdicional()">Cerrar</button>
+
+            </div>
+
+
+        </ng-template>
+
+        <div class="input-group mb-3" style="width: 50%">
+            <ng-select *ngIf="colas" [items]="colas" bindLabel="nombreCola" bindValue="idCola" (change)="onChange($event)" style="width:60%" placeholder="Colas trabajo" #ngselect1>
+            </ng-select>
+            &nbsp;&nbsp;&nbsp;
+            <input type="text" class="form-control" id="buscarlote" placeholder="Buscar por idlote" aria-label="Example text with button addon" aria-describedby="button-addon1" #buscarid>
+            <div class="input-group-prepend">
+
+                <button class="btn btn-outline-primary" type="button" id="button-addon1" [disabled]="buscarid.value == '' " (click)="buscaridlote($event,buscarid);buscarid.value=''" #buscar>Buscar</button>
+            </div>
+
+        </div>
 
 
     </div>
@@ -163,7 +331,7 @@
             </div>
             <div class="pdf-body">
                 <div *ngIf="isOutlineShown" class="outline">
-                    <div class="thumbnails" style="overflow: scroll">
+                    <div class="thumbnails" style="overflow: scroll" contentEditable=true>
                         <pdf-viewer [src]="pdfSrc" [page]="page" [original-size]="false" draggable="pdfsrc" style="display: block;height:15vh; "></pdf-viewer>
                     </div>
                     <!-- <ul *ngFor="let item of outline" class="outline-list">
@@ -193,12 +361,12 @@
                     <div class="form-group">
                         <h6 [ngStyle]="{'color': primerCaptura === '1' ? 'red' : 'black' }">Tipo Documental</h6>
 
-                        <ng-select [items]="tiposDocumentales" bindLabel="NombreTipoDocumental" bindValue="idTipoDocumental" [(ngModel)]="idTipoDocSelected" style="width:100%; " placeholder="Tipo Documental" (change)="onChangeTipoDocumental($event)" #ngselectTipodocumental>
+                        <ng-select [items]="tiposDocumentales" autoClose="true" bindLabel="NombreTipoDocumental" bindValue="idTipoDocumental" [(ngModel)]="idTipoDocSelected" style="width:100%; " placeholder="Tipo Documental" (change)="onChangeTipoDocumental($event)" #ngselectTipodocumental>
                         </ng-select>
                     </div>
                     <div class="form-group">
                         <h6>Template</h6>
-                        <ng-select [items]="ArrayTemplate" bindLabel="NombreTemplate" bindValue="idtemplate_" [(ngModel)]="idTemplateSelected" style="width:100%" placeholder="Template" #ngSelectTemplate> </ng-select>
+                        <ng-select [items]="ArrayTemplate" bindLabel="NombreTemplate" autoclose="true" bindValue="idtemplate_" [(ngModel)]="idTemplateSelected" (change)="onChangeTemplate()" style="width:100%" placeholder="Template" #ngSelectTemplate> </ng-select>
                     </div>
                 </div>
             </div>

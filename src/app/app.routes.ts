@@ -8,7 +8,7 @@ const APP_ROUTES: Routes = [
 
 
      { path: 'colas', component:ColasTrabajoComponent,canActivate:[AuthGuard]},
-     { path: 'Login', component:LoginComponent },
+     { path: 'Login', component:LoginComponent},
     // { path: '**', pathMatch: 'full' , redirectTo:'home'}
 
 ];

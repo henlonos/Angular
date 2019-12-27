@@ -8,10 +8,9 @@
 
         <form [formGroup]="form" #f="ngForm" (ngSubmit)="onSubmit(f.value)">
             <label *ngIf="isFieldInvalid('usuario')">* </label>
-            <input matInput formControlName="usuario" required id="usuario" type="text" class="fadeIn second" placeholder="Usuario">
-            <label *ngIf="isFieldInvalid('clave')">*</label>
-            <input matInput type="password" id="clave" required class="fadeIn third" formControlName="clave" placeholder="Contraseña">
-
+            <input formControlName="usuario" required id="usuario" type="text" class="fadeIn second" placeholder="Usuario">
+            <label *ngIf="isFieldInvalid('clave') ">*</label>
+            <input type="password" id="clave" required class="fadeIn third" formControlName="clave" placeholder="Contraseña">
             <input type="submit" value="Ingresar" class="fadeIn fourth" name="Ingresar">
 
         </form>

@@ -1,10 +1,11 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-
+  // 
 @Component({
   selector: 'dynamic-form-builder',
   template:`
-    <form (ngSubmit)="onSubmit.emit(this.form.value)" [formGroup]="form" class="form-horizontal form-control-sm "  #f="ngForm">
+
+    <form  (ngSubmit)="onSubmit.emit(this.form.value)" [formGroup]="form" class="form-horizontal form-control-sm "  #f="ngForm">
       <div *ngFor="let field of fields" >
           <field-builder [field]="field" [form]="form"></field-builder>
       </div>
@@ -13,8 +14,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
       <div class="form-group row">
         <div class="col-md-3"></div>
         <div class="col-md-12" *ngIf="form.valid">
-          <button type="submit" [disabled]="!form.valid"  class="btn btn-outline-primary btn-block " >Guardar</button>
-           <!--<strong >Saved all values</strong>-->
+          <button type="submit" [disabled]="!form.valid"  class="btn btn-outline-primary btn-block " id="btnguardar" >Guardar</button>
         </div>
       </div>
     </form>

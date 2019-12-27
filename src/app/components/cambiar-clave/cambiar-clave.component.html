@@ -1,0 +1,22 @@
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+
+        <div class="fadeIn first">
+            <img src="assets/libs/img/LogoHorus.png" id="icon" alt="User Icon" />
+
+        </div>
+
+        <form [formGroup]="form" #f="ngForm" (ngSubmit)="onSubmit(f.value)">
+            <label *ngIf="isFieldInvalid('usuario')">* </label>
+            <input matInput formControlName="usuario" required id="usuario" type="text" class="fadeIn second" placeholder="Usuario">
+            <label *ngIf="isFieldInvalid('clave')">*</label>
+            <input matInput type="password" id="clave" required class="fadeIn third" formControlName="clave" placeholder="Contraseña" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\u0021-\u002b\u003c-\u0040]).{6,15}$">
+            <label *ngIf="isFieldInvalid('claveConfirm')">*</label>
+            <input matInput type="password" id="claveConfirm" required class="fadeIn third" formControlName="claveConfirm" placeholder="Confirmar Contraseña" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\u0021-\u002b\u003c-\u0040]).{6,15}$">
+            <input type="submit" value="guardar" class="fadeIn fourth" name="Guardar">
+
+        </form>
+
+
+    </div>
+</div>

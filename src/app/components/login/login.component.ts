@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, PatternValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
@@ -25,18 +25,23 @@ export class LoginComponent implements OnInit {
     private message:SweetMessageService) 
     { }
 
+
   ngOnInit() {
+    
     this.form = this.fb.group({
       usuario: ['', Validators.required],
       clave: ['', Validators.required]
     });
   }
   isFieldInvalid(field: string) {
+   
     return (
       (!this.form.get(field).valid && this.form.get(field).touched) ||
       (this.form.get(field).untouched && this.formSubmitAttempt)
     );
   }
+
+
 showError()
 {
   this.toastr.error('','Usuario o contraseña incorrectos o el usuario ya esta logueado!')
@@ -56,10 +61,8 @@ onSubmit(formulario)
             { 
               this.message.close();
               this.token = data;
-              console.log("POST Request is successful", data) ;
               localStorage.setItem('token', this.token);  
               localStorage.setItem("usuario",credentials.userName);
-    
               this.router.navigateByUrl("/colas");
           },
           error => { this.message.showError("usuario o contraseña incorrecta y/o usuario logueado en otra maquina") }

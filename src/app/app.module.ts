@@ -22,6 +22,7 @@ import {  JwtModule } from '@auth0/angular-jwt';
 import {NgbModule,NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { FieldsFunctionalityService } from './fields-functionality.service';
 import {DocumentsService} from './documents.service';
+import { CambiarClaveComponent } from './components/cambiar-clave/cambiar-clave.component';
 
 
 
@@ -34,7 +35,8 @@ export function tokenGetter() {
     AppComponent,
     MenuComponent,
     ColasTrabajoComponent,
-    LoginComponent
+    LoginComponent,
+    CambiarClaveComponent
     // ,
     // MenuComponent
   ],
